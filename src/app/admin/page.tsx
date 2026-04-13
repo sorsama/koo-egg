@@ -196,9 +196,9 @@ export default async function AdminDashboard() {
                <h2 className="text-2xl font-black text-red-900 tracking-tight uppercase">Inventory Risk</h2>
                <p className="text-[10px] text-red-700 font-bold uppercase tracking-widest mt-1">Priority Restock List</p>
             </div>
-            <span className="px-4 py-2 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+            <div className="px-4 py-2 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
               <WarningIcon fontSize="small" /> {lowStockProducts.length} CRITICAL
-            </span>
+            </div>
           </div>
           <div className="space-y-4">
             {lowStockProducts.map((product) => (
