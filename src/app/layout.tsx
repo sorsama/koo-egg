@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "KOO Integrated Egg Co., Ltd.",
   description: "Digital Platform for KOO Integrated Egg Management System - B2B & B2C Egg Commerce",
