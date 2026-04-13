@@ -43,7 +43,7 @@ export default async function BillingPage() {
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-4 bg-gray-50 p-4 border-4 border-gray-100">
          <button className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white text-sm font-black uppercase tracking-widest hover:bg-blue-600 transition-colors">
-            <FilterListIcon fontSize="small" /> Filter By Date
+            <FilterListIcon className="w-5 h-5" /> Filter By Date
          </button>
          <button className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-900 text-sm font-black uppercase tracking-widest hover:bg-gray-100 transition-colors">
             Export All (CSV)

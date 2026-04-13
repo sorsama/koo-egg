@@ -197,7 +197,7 @@ export default async function AdminDashboard() {
                <p className="text-[10px] text-red-700 font-bold uppercase tracking-widest mt-1">Priority Restock List</p>
             </div>
             <div className="px-4 py-2 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-              <WarningIcon fontSize="small" /> {lowStockProducts.length} CRITICAL
+              <WarningIcon className="w-5 h-5" /> {lowStockProducts.length} CRITICAL
             </div>
           </div>
           <div className="space-y-4">
@@ -205,7 +205,7 @@ export default async function AdminDashboard() {
               <div key={product.id} className="flex items-center justify-between p-4 bg-white hover:bg-red-100 transition-colors border-l-4 border-red-500">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-red-100 text-red-500 flex items-center justify-center">
-                    <PetsIcon fontSize="small" />
+                    <PetsIcon className="w-5 h-5" />
                   </div>
                   <div>
                     <p className="text-base font-black text-gray-900 uppercase tracking-tight">{product.name}</p>

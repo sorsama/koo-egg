@@ -34,9 +34,9 @@ export default async function ProductsPage() {
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 bg-white flex items-center justify-center text-blue-500 rounded-none shadow-none group-hover:scale-110 transition-transform duration-200">
                     {product.poultryType === "CHICKEN" || product.poultryType === "DUCK" ? (
-                      <PetsIcon fontSize="large" />
+                      <PetsIcon className="w-8 h-8" />
                     ) : (
-                      <EggIcon fontSize="large" />
+                      <EggIcon className="w-8 h-8" />
                     )}
                   </div>
                   <div>

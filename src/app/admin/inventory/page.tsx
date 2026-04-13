@@ -48,9 +48,9 @@ export default async function InventoryPage() {
               <div className="flex items-center gap-4">
                 <span className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center">
                   {type === "CHICKEN" || type === "DUCK" ? (
-                    <PetsIcon fontSize="medium" />
+                    <PetsIcon className="w-6 h-6" />
                   ) : (
-                    <EggIcon fontSize="medium" />
+                    <EggIcon className="w-6 h-6" />
                   )}
                 </span>
                 <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">{type} Eggs</h2>
