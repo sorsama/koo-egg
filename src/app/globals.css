@@ -1,84 +1,46 @@
 @import "tailwindcss";
 @source "../";
 
-:root {
-  /* KOO Brand Colors - Warm, Premium Egg Theme */
-  --koo-gold: #D4A24E;
-  --koo-gold-light: #F2D98D;
-  --koo-gold-dark: #B8862D;
-  --koo-brown: #5C3D2E;
-  --koo-brown-light: #8B6B5A;
-  --koo-cream: #FFF8ED;
-  --koo-cream-dark: #F5E6D0;
-  --koo-green: #2D7A4F;
-  --koo-green-light: #3DA065;
-  --koo-red: #C0392B;
-  --koo-blue: #2C3E50;
-  --koo-dark: #1A1A2E;
-  --koo-dark-surface: #252540;
-  --koo-dark-card: #2D2D4A;
+@theme {
+  --color-foreground: #111827;
+  --color-background: #FFFFFF;
+  --color-primary: #3B82F6;
+  --color-secondary: #10B981;
+  --color-accent: #F59E0B;
+  --color-muted: #F3F4F6;
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Outfit';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-}
-
-html {
-  scroll-behavior: smooth;
+  src: url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Outfit', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.glass-light {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, var(--koo-gold) 0%, var(--koo-gold-light) 50%, var(--koo-gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Smooth transitions */
-.transition-all-smooth {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Base resets for Flat Design */
+* {
+  box-shadow: none !important;
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--color-muted);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 162, 78, 0.3);
-  border-radius: 3px;
+  background: #D1D5DB;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 162, 78, 0.5);
+  background: #9CA3AF;
 }

@@ -2,41 +2,51 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import HomeIcon from "@mui/icons-material/Home";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import PersonIcon from "@mui/icons-material/Person";
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const tabs = [
-    { label: "Shop", href: "/customer", icon: "🏠" },
-    { label: "Cart", href: "/customer/cart", icon: "🛒" },
-    { label: "Orders", href: "/customer/orders", icon: "📦" },
-    { label: "Profile", href: "/customer/profile", icon: "👤" },
+    { label: "Shop", href: "/customer", icon: <HomeIcon fontSize="medium" /> },
+    { label: "Cart", href: "/customer/cart", icon: <ShoppingCartIcon fontSize="medium" /> },
+    { label: "Orders", href: "/customer/orders", icon: <InventoryIcon fontSize="medium" /> },
+    { label: "Profile", href: "/customer/profile", icon: <PersonIcon fontSize="medium" /> },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0F0F1A] max-w-md mx-auto relative" style={{ minHeight: "100dvh" }}>
+    <div className="min-h-screen bg-gray-50 max-w-md mx-auto relative font-sans" style={{ minHeight: "100dvh" }}>
+      {/* Background Decor */}
+      <div className="absolute inset-0 pointer-events-none opacity-20" style={{
+        backgroundImage: `radial-gradient(#9CA3AF 2px, transparent 2px)`,
+        backgroundSize: '24px 24px'
+      }} />
+
       {/* Top Bar */}
-      <header className="sticky top-0 z-50 glass px-5 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4A24E] to-[#F2D98D] flex items-center justify-center">
-            <span className="text-xs font-black text-[#1A1A2E]">K</span>
+      <header className="sticky top-0 z-50 bg-white border-b-4 border-gray-900 px-6 py-5 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-500 flex items-center justify-center font-black text-white text-lg hover:scale-105 transition-transform">
+            K
           </div>
-          <span className="text-sm font-bold text-white">KOO Egg</span>
+          <span className="text-xl font-black text-gray-900 uppercase tracking-tight">KOO Egg</span>
         </Link>
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded-md bg-green-500/10 text-green-400 text-[10px] font-medium">
+          <span className="px-3 py-1 bg-emerald-100 border-2 border-emerald-500 text-emerald-800 text-[10px] font-black uppercase tracking-widest">
             Consumer
           </span>
         </div>
       </header>
 
       {/* Content */}
-      <main className="pb-20 px-4">
+      <main className="pb-24 px-6 relative z-10">
         {children}
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md glass border-t border-white/5 px-4 py-2 z-50">
+      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t-4 border-gray-900 px-2 py-3 z-50">
         <div className="flex items-center justify-around">
           {tabs.map((tab) => {
             const isActive = pathname === tab.href;
@@ -44,14 +54,16 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all-smooth ${
-                  isActive ? "text-[#D4A24E]" : "text-white/40 hover:text-white/60"
+                className={`flex flex-col items-center justify-center gap-1 py-2 px-4 transition-all duration-200 w-16 relative group ${
+                  isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-900"
                 }`}
               >
-                <span className="text-lg">{tab.icon}</span>
-                <span className="text-[10px] font-medium">{tab.label}</span>
+                <div className={`transition-transform duration-200 ${isActive ? "-translate-y-1 scale-110" : "group-hover:scale-110"}`}>
+                  {tab.icon}
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
                 {isActive && (
-                  <div className="w-1 h-1 rounded-full bg-[#D4A24E]" />
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500" />
                 )}
               </Link>
             );

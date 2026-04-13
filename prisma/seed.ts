@@ -198,7 +198,7 @@ async function main() {
     },
   });
 
-  console.log("✅ Seeding completed!");
+  console.log("Seeding completed!");
   console.log(`   - ${await prisma.user.count()} users`);
   console.log(`   - ${await prisma.product.count()} products`);
   console.log(`   - ${await prisma.pricingTier.count()} pricing tiers`);
