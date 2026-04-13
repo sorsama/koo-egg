@@ -1,0 +1,121 @@
+// KOO Integrated Egg Co., Ltd. - Database Schema
+// Mapped to DFD Data Stores: D1 (User), D2 (Product & Inventory), D3 (Order)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// D1: User Data Store
+// ============================================================
+model User {
+  id              String   @id @default(uuid())
+  fullname        String
+  email           String   @unique
+  phoneNumber     String?
+  address         String?
+  role            String   @default("CUSTOMER") // CUSTOMER, EMPLOYEE, ADMIN
+  accountType     String?  // CONSUMER, FOOD_BUSINESS, RETAILER (only for CUSTOMER role)
+  paymentInfo     String?  // Simulated payment information
+  password        String   @default("demo1234")  // Simplified for prototype
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  orders          Order[]
+  subscriptions   Subscription[]
+}
+
+// ============================================================
+// D2: Product & Inventory Data Store
+// ============================================================
+model Product {
+  id              String   @id @default(uuid())
+  name            String
+  poultryType     String   // CHICKEN, DUCK, GOOSE, QUAIL
+  gradeSize       String   // Size 0 (Jumbo), Size 1, Size 2, Size 3, Size 4, Size 5
+  weightRange     String   // e.g. ">70g", "65-70g", "60-65g"
+  description     String?
+  image           String?  // URL or path to product image
+  basePrice       Float    // Default price (Consumer price)
+  stockQuantity   Int      @default(0)
+  unit            String   @default("eggs") // eggs, trays, cartons
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  pricingTiers    PricingTier[]
+  orderItems      OrderItem[]
+}
+
+model PricingTier {
+  id              String   @id @default(uuid())
+  productId       String
+  accountType     String   // CONSUMER, FOOD_BUSINESS, RETAILER
+  price           Float    // Override price for this account type
+
+  product         Product  @relation(fields: [productId], references: [id])
+}
+
+// ============================================================
+// D3: Order Data Store
+// ============================================================
+model Order {
+  id              String   @id @default(uuid())
+  customerId      String
+  status          String   @default("PENDING") // PENDING, CONFIRMED, PROCESSING, DELIVERING, DELIVERED, CANCELLED
+  address         String?
+  trackingLat     Float?   // GPS simulation
+  trackingLng     Float?   // GPS simulation
+  subtotal        Float    @default(0)
+  paymentMethod   String?  // CASH, CREDIT_CARD, BANK_TRANSFER
+  cancelReason    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  customer        User     @relation(fields: [customerId], references: [id])
+  items           OrderItem[]
+  invoice         Invoice?
+}
+
+model OrderItem {
+  id              String   @id @default(uuid())
+  orderId         String
+  productId       String
+  quantity        Int
+  priceAtTime     Float    // Price snapshot at time of order
+
+  order           Order    @relation(fields: [orderId], references: [id])
+  product         Product  @relation(fields: [productId], references: [id])
+}
+
+model Invoice {
+  id              String   @id @default(uuid())
+  orderId         String   @unique
+  invoiceNumber   String   @unique // e.g. INV-2025-001
+  subtotal        Float
+  tax             Float    @default(0)
+  total           Float
+  createdAt       DateTime @default(now())
+
+  order           Order    @relation(fields: [orderId], references: [id])
+}
+
+model Subscription {
+  id              String   @id @default(uuid())
+  customerId      String
+  productId       String?
+  frequency       String   // WEEKLY, BIWEEKLY, MONTHLY
+  quantity         Int      @default(1)
+  discountPercent Float    @default(5) // Subscription discount
+  status          String   @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
+  cancelReason    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  customer        User     @relation(fields: [customerId], references: [id])
+}
