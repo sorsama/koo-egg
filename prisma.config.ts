@@ -12,6 +12,6 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: env("DATABASE_URL"),
+    url: env("koo_POSTGRES_URL_NON_POOLING"),
   },
 });

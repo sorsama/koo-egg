@@ -7,8 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("koo_POSTGRES_PRISMA_URL")
+  directUrl = env("koo_POSTGRES_URL_NON_POOLING")
 }
 
 // ============================================================
@@ -45,6 +46,7 @@ model Product {
   basePrice       Float    // Default price (Consumer price)
   stockQuantity   Int      @default(0)
   unit            String   @default("eggs") // eggs, trays, cartons
+  isArchived      Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -114,6 +116,7 @@ model Subscription {
   discountPercent Float    @default(5) // Subscription discount
   status          String   @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
   cancelReason    String?
+  inactiveReason  String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
