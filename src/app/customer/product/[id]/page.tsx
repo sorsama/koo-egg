@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import EggIcon from "@mui/icons-material/Egg";
 import PetsIcon from "@mui/icons-material/Pets";
 import SubscribeButton from "./SubscribeButton";
+import QuantityActions from "./QuantityActions";
 import { requireCustomer } from "@/lib/auth";
-import { addItem } from "../../cart/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -33,17 +33,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     GOOSE: "bg-amber-500 text-gray-900",
     QUAIL: "bg-purple-500 text-white",
   };
-
-  async function addToCartOnly() {
-    "use server";
-    await addItem(product!.id, 1);
-  }
-
-  async function buyNow() {
-    "use server";
-    await addItem(product!.id, 1);
-    redirect("/customer/cart");
-  }
 
   return (
     <div className="py-8 space-y-8">
@@ -123,28 +112,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <div className="space-y-4 pt-4">
-        <form action={buyNow}>
-          <button
-            type="submit"
-            disabled={product.stockQuantity <= 0}
-            className="w-full py-5 bg-emerald-500 text-white font-black text-lg uppercase tracking-widest hover:bg-emerald-600 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:hover:scale-100"
-          >
-            {product.stockQuantity > 0 ? `Buy Now — ฿${price.toFixed(2)}` : "Out of Stock"}
-          </button>
-        </form>
-        <form action={addToCartOnly}>
-          <button
-            type="submit"
-            disabled={product.stockQuantity <= 0}
-            className="w-full py-4 bg-white border-4 border-gray-900 text-gray-900 font-black uppercase tracking-widest hover:bg-gray-900 hover:text-white transition-colors disabled:opacity-50"
-          >
-            Add to Cart
-          </button>
-        </form>
+      <QuantityActions
+        productId={product.id}
+        unitPrice={price}
+        stockQuantity={product.stockQuantity}
+      />
 
-        <SubscribeButton productId={product.id} customerId={session.userId} productName={product.name} />
-      </div>
+      <SubscribeButton productId={product.id} customerId={session.userId} productName={product.name} />
     </div>
   );
 }
