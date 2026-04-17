@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import EggIcon from "@mui/icons-material/Egg";
 import PetsIcon from "@mui/icons-material/Pets";
@@ -47,6 +48,7 @@ export default function POSClient({
   } | null>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const filteredProducts = useMemo(
     () =>
@@ -90,6 +92,7 @@ export default function POSClient({
         );
         setReceipt({ invoiceNumber: result.invoiceNumber, total: result.total, items: cart });
         setCart([]);
+        router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Payment failed");
       }

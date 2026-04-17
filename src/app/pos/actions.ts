@@ -86,6 +86,11 @@ export async function completeSale(lines: PosLine[], paymentMethod: PaymentMetho
   revalidatePath("/admin");
   revalidatePath("/admin/orders");
   revalidatePath("/admin/inventory");
+  revalidatePath("/admin/products");
+  revalidatePath("/customer");
+  for (const it of orderItems) {
+    revalidatePath(`/customer/product/${it.productId}`);
+  }
 
   return { orderId: order.id, invoiceNumber, subtotal, tax, total };
 }

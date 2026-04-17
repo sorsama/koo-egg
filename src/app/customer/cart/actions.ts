@@ -126,7 +126,12 @@ export async function checkout(formData: FormData) {
   revalidatePath("/customer");
   revalidatePath("/customer/cart");
   revalidatePath("/customer/orders");
-  revalidatePath("/admin/orders");
   revalidatePath("/admin");
+  revalidatePath("/admin/orders");
+  revalidatePath("/admin/products");
+  revalidatePath("/admin/inventory");
+  for (const it of orderItems) {
+    revalidatePath(`/customer/product/${it.productId}`);
+  }
   redirect(`/customer/orders?placed=${order.id}`);
 }
