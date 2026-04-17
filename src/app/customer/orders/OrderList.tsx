@@ -22,6 +22,7 @@ type Order = {
   createdAt: Date;
   subtotal: number;
   trackingLat: number | null;
+  trackingLng: number | null;
   cancelReason: string | null;
   paymentMethod: string | null;
   items: OrderItem[];
@@ -37,9 +38,10 @@ const CANCEL_REASONS = [
 ];
 
 const CANCELLABLE = new Set(["PENDING", "CONFIRMED"]);
+const TRACKABLE = new Set(["CONFIRMED", "PROCESSING", "DELIVERING"]);
 
 export default function OrderList({ orders }: { orders: Order[] }) {
-  const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
+  const [trackingOrder, setTrackingOrder] = useState<Order | null>(null);
   const [cancelOrderId, setCancelOrderId] = useState<string | null>(null);
 
   return (
@@ -119,12 +121,12 @@ export default function OrderList({ orders }: { orders: Order[] }) {
               </div>
 
               <div className="flex items-center gap-3">
-                {order.status === "DELIVERING" && (
+                {TRACKABLE.has(order.status) && (
                   <button
-                    onClick={() => setTrackingOrderId(order.id)}
+                    onClick={() => setTrackingOrder(order)}
                     className="px-6 py-3 bg-purple-500 text-white text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-purple-600"
                   >
-                    <LocationOnIcon fontSize="small" /> Track GPS
+                    <LocationOnIcon fontSize="small" /> Track Order
                   </button>
                 )}
                 {CANCELLABLE.has(order.status) && (
@@ -162,7 +164,15 @@ export default function OrderList({ orders }: { orders: Order[] }) {
         ))
       )}
 
-      {trackingOrderId && <GPSTracker orderId={trackingOrderId} onClose={() => setTrackingOrderId(null)} />}
+      {trackingOrder && (
+        <GPSTracker
+          orderId={trackingOrder.id}
+          orderStatus={trackingOrder.status}
+          trackingLat={trackingOrder.trackingLat}
+          trackingLng={trackingOrder.trackingLng}
+          onClose={() => setTrackingOrder(null)}
+        />
+      )}
       {cancelOrderId && (
         <CancelOrderModal orderId={cancelOrderId} onClose={() => setCancelOrderId(null)} />
       )}

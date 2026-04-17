@@ -7,14 +7,26 @@ import CloseIcon from "@mui/icons-material/Close";
 
 type TrackingProps = {
   orderId: string;
+  orderStatus: string;
+  trackingLat: number | null;
+  trackingLng: number | null;
   onClose: () => void;
 };
 
-export default function GPSTracker({ orderId, onClose }: TrackingProps) {
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState("Dispatching from KOO Farm...");
+const INITIAL_STATUS_BY_ORDER: Record<string, string> = {
+  CONFIRMED: "Order confirmed · Preparing for dispatch",
+  PROCESSING: "Processing at KOO Farm",
+  DELIVERING: "Dispatching from KOO Farm...",
+};
+
+export default function GPSTracker({ orderId, orderStatus, trackingLat, trackingLng, onClose }: TrackingProps) {
+  const isDelivering = orderStatus === "DELIVERING";
+  const gpsAvailable = trackingLat !== null && trackingLng !== null;
+  const [progress, setProgress] = useState(isDelivering ? 0 : orderStatus === "PROCESSING" ? 15 : 5);
+  const [status, setStatus] = useState(INITIAL_STATUS_BY_ORDER[orderStatus] ?? "Tracking order...");
 
   useEffect(() => {
+    if (!isDelivering) return;
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -22,17 +34,17 @@ export default function GPSTracker({ orderId, onClose }: TrackingProps) {
           setStatus("Arrived at your location!");
           return 100;
         }
-        
+
         if (prev > 80) setStatus("Approaching delivery address...");
         else if (prev > 40) setStatus("In transit - On B2B Route #42");
         else if (prev > 10) setStatus("Leaving Processing Facility...");
-        
+
         return prev + 1;
       });
-    }, 100); // 10 seconds total for demo
+    }, 100);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isDelivering]);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-none">
@@ -46,11 +58,22 @@ export default function GPSTracker({ orderId, onClose }: TrackingProps) {
 
         <div className="space-y-2 pr-8">
           <div className="flex items-center gap-3">
-            <span className="w-3 h-3 bg-emerald-500 animate-pulse border-2 border-emerald-200"></span>
-            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight leading-none">GPS Tracking</h2>
+            <span className={`w-3 h-3 border-2 ${gpsAvailable ? "bg-emerald-500 border-emerald-200 animate-pulse" : "bg-amber-500 border-amber-200"}`}></span>
+            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight leading-none">Order Tracking</h2>
           </div>
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Order #{orderId.slice(0, 8)}</p>
+          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Order #{orderId.slice(0, 8)} · {orderStatus}</p>
         </div>
+
+        {!gpsAvailable && (
+          <div className="p-3 bg-amber-100 border-l-8 border-amber-500 text-[10px] font-black uppercase tracking-widest text-amber-900">
+            GPS data unavailable — showing last known position. Tracking update may be delayed.
+          </div>
+        )}
+        {gpsAvailable && !isDelivering && (
+          <div className="p-3 bg-blue-100 border-l-8 border-blue-500 text-[10px] font-black uppercase tracking-widest text-blue-900">
+            Live tracking begins once the order is out for delivery.
+          </div>
+        )}
 
         {/* Map Mockup */}
         <div className="relative h-48 bg-gray-100 border-4 border-gray-900 overflow-hidden">
