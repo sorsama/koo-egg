@@ -4,7 +4,9 @@
       "Bash(git *)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
-      "Bash(vercel --version)"
+      "Bash(vercel --version)",
+      "Bash(npx prisma *)",
+      "Bash(koo_POSTGRES_URL_NON_POOLING=\"postgresql://placeholder:placeholder@localhost:5432/placeholder\" koo_POSTGRES_PRISMA_URL=\"postgresql://placeholder:placeholder@localhost:5432/placeholder\" npx prisma generate)"
     ]
   }
 }
