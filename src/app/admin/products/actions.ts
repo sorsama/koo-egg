@@ -1,7 +1,15 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { uploadImageToImgbb } from "@/lib/imgbb";
 import { revalidatePath } from "next/cache";
+
+async function readImage(formData: FormData): Promise<string | null> {
+  const raw = formData.get("image");
+  if (!raw || typeof raw === "string") return null;
+  if (!(raw instanceof File) || raw.size === 0) return null;
+  return await uploadImageToImgbb(raw);
+}
 
 function parseNumber(raw: FormDataEntryValue | null, field: string) {
   const num = parseFloat(String(raw ?? ""));
@@ -29,6 +37,8 @@ export async function createProduct(formData: FormData) {
     throw new Error("Missing required fields");
   }
 
+  const image = await readImage(formData);
+
   const product = await prisma.product.create({
     data: {
       name,
@@ -39,6 +49,7 @@ export async function createProduct(formData: FormData) {
       stockQuantity,
       unit,
       description,
+      image,
     },
   });
 
@@ -64,6 +75,9 @@ export async function updateProduct(id: string, formData: FormData) {
     throw new Error("Missing required fields");
   }
 
+  const newImage = await readImage(formData);
+  const removeImage = String(formData.get("removeImage") ?? "") === "true";
+
   await prisma.product.update({
     where: { id },
     data: {
@@ -75,6 +89,7 @@ export async function updateProduct(id: string, formData: FormData) {
       stockQuantity,
       unit,
       description,
+      ...(newImage ? { image: newImage } : removeImage ? { image: null } : {}),
     },
   });
 

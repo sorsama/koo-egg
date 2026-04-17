@@ -6,6 +6,15 @@ import { createProduct } from "./actions";
 export default function AddProductClient() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return setPreview(null);
+    const reader = new FileReader();
+    reader.onload = () => setPreview(typeof reader.result === "string" ? reader.result : null);
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -14,8 +23,9 @@ export default function AddProductClient() {
     try {
       await createProduct(formData);
       setIsOpen(false);
-    } catch (err: any) {
-      alert(err.message);
+      setPreview(null);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Save failed");
     } finally {
       setLoading(false);
     }
@@ -40,7 +50,7 @@ export default function AddProductClient() {
               ✕
             </button>
             <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tight mb-6">Add Product</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Name</label>
@@ -76,6 +86,17 @@ export default function AddProductClient() {
                   <input required name="stockQuantity" type="number" className="w-full bg-gray-100 text-gray-900 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white border-2 border-transparent focus:border-blue-500 transition-all" placeholder="e.g. 1000" />
                 </div>
               </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Image (optional)</label>
+                <input name="image" type="file" accept="image/*" onChange={handleFileChange} className="w-full text-xs font-bold file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-blue-500 file:text-white file:uppercase file:tracking-widest file:font-black hover:file:bg-blue-600" />
+                {preview ? (
+                  <div className="mt-3 border-4 border-gray-900 p-2 w-32 h-32 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                ) : null}
+              </div>
+
               <div className="pt-4">
                 <button type="submit" disabled={loading} className="w-full py-4 bg-blue-500 text-white font-bold rounded-md hover:scale-[1.02] hover:bg-blue-600 transition-all duration-200 uppercase tracking-widest disabled:opacity-50 disabled:scale-100 text-sm">
                   {loading ? "Saving..." : "Save Product"}

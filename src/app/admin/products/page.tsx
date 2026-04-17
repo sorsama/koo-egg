@@ -24,8 +24,11 @@ function ProductCard({ product, archived = false }: { product: ProductWithTiers;
     >
       <div className="flex items-start justify-between mb-8 relative z-10 gap-4">
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-14 h-14 bg-white flex items-center justify-center text-blue-500 rounded-none shadow-none">
-            {product.poultryType === "CHICKEN" || product.poultryType === "DUCK" ? (
+          <div className="w-14 h-14 bg-white flex items-center justify-center text-blue-500 rounded-none shadow-none overflow-hidden">
+            {product.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+            ) : product.poultryType === "CHICKEN" || product.poultryType === "DUCK" ? (
               <PetsIcon className="w-8 h-8" />
             ) : (
               <EggIcon className="w-8 h-8" />
@@ -55,6 +58,7 @@ function ProductCard({ product, archived = false }: { product: ProductWithTiers;
               stockQuantity: product.stockQuantity,
               unit: product.unit,
               description: product.description,
+              image: product.image,
               isArchived: product.isArchived,
             }}
           />

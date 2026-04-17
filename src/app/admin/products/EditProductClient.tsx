@@ -14,6 +14,7 @@ type Product = {
   stockQuantity: number;
   unit: string;
   description: string | null;
+  image: string | null;
   isArchived: boolean;
 };
 
@@ -22,16 +23,30 @@ export default function EditProductClient({ product }: { product: Product }) {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [preview, setPreview] = useState<string | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return setPreview(null);
+    setRemoveImage(false);
+    const reader = new FileReader();
+    reader.onload = () => setPreview(typeof reader.result === "string" ? reader.result : null);
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
+    if (removeImage) formData.set("removeImage", "true");
     try {
       await updateProduct(product.id, formData);
       setIsOpen(false);
+      setPreview(null);
+      setRemoveImage(false);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Update failed");
     } finally {
@@ -80,7 +95,7 @@ export default function EditProductClient({ product }: { product: Product }) {
               </div>
             ) : null}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Name</label>
@@ -135,6 +150,41 @@ export default function EditProductClient({ product }: { product: Product }) {
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Description</label>
                 <textarea name="description" rows={3} defaultValue={product.description ?? ""}
                   className="w-full bg-gray-100 text-gray-900 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white border-2 border-transparent focus:border-blue-500 transition-all" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Image</label>
+                <div className="flex items-start gap-4">
+                  {preview ? (
+                    <div className="border-4 border-gray-900 p-2 w-32 h-32 overflow-hidden shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={preview} alt="New preview" className="w-full h-full object-cover" />
+                    </div>
+                  ) : product.image && !removeImage ? (
+                    <div className="border-4 border-gray-900 p-2 w-32 h-32 overflow-hidden shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="border-4 border-dashed border-gray-300 w-32 h-32 flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-gray-400 shrink-0">
+                      No image
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-2">
+                    <input name="image" type="file" accept="image/*" onChange={handleFileChange} className="w-full text-xs font-bold file:mr-3 file:py-2 file:px-3 file:border-0 file:bg-blue-500 file:text-white file:uppercase file:tracking-widest file:font-black hover:file:bg-blue-600" />
+                    {product.image && !preview ? (
+                      <button
+                        type="button"
+                        onClick={() => setRemoveImage((v) => !v)}
+                        className={`px-3 py-2 text-[10px] font-black uppercase tracking-widest rounded-md ${
+                          removeImage ? "bg-amber-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-red-500 hover:text-white"
+                        }`}
+                      >
+                        {removeImage ? "Will remove — click to undo" : "Remove image"}
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4 flex gap-3">
