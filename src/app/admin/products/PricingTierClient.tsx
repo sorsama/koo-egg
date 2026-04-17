@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { deletePricingTier, upsertPricingTier } from "./actions";
 
 type Tier = { id: string; accountType: string; price: number };
@@ -24,7 +25,10 @@ export default function PricingTierClient({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [, startTransition] = useTransition();
+
+  useEffect(() => setMounted(true), []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,8 +66,8 @@ export default function PricingTierClient({
         Tiers
       </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50">
+      {isOpen && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/50">
           <div className="bg-white rounded-lg p-8 w-full max-w-xl border-4 border-gray-900 relative max-h-[90vh] overflow-y-auto">
             <button
               type="button"
@@ -141,7 +145,8 @@ export default function PricingTierClient({
               </button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
